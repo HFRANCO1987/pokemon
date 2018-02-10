@@ -114,5 +114,15 @@ public class Pokemon extends BaseEntity<Long> implements Serializable {
 			return false;
 		return true;
 	}
+
+	public PokemonTO pokemonTO() {
+		PokemonTO pokemonTO = new PokemonTO();
+		pokemonTO.setName(this.name);
+		pokemonTO.setNext_evolution(this.next_evolution);
+		pokemonTO.setNum(this.num);
+		pokemonTO.setPrev_evolution(this.prev_evolution);
+		pokemonTO.setType(this.type);
+		return pokemonTO;
+	}
 	
 }

@@ -41,22 +41,25 @@ public class PokemonCtrl extends BaseCtrl<Pokemon> implements Serializable {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obterPokemonPorNumero(@PathParam(value = "numero_do_pokemon") Long numeroDoPokemon)
 			throws Exception {
-		Pokemon pokemon = null;
+		PokemonTO pokemonTO = null;
 		Integer status = Response.Status.OK.getStatusCode();
-		MsgRetorno retorno = new MsgRetorno();
+		String mensagemRetorno = "";
 		try {
-			pokemon = pokemonNeg.obterPokemonPorNumero(numeroDoPokemon);
+			Pokemon pokemon = pokemonNeg.obterPokemonPorNumero(numeroDoPokemon);
 			if (pokemon != null && pokemon.getNum() !=null 
 					&& pokemon.getNum() > 0){
-				retorno.getListPokemon().clear();
-				retorno.getListPokemon().add(pokemon);
+				pokemonTO = pokemon.pokemonTO();
 			}
 		} catch (Exception e) {
-			retorno.setMensagem("Houve uma falha ao obtert Pokemon:" + e.getMessage());
-			retorno.setStatus(status);
-			return Response.status(status).entity(retorno).build();
+			mensagemRetorno = "Houve uma falha ao obtert Pokemon:" + e.getMessage();
+			return Response.status(status).entity(mensagemRetorno).build();
 		}
-		return Response.status(status).entity(new PokemonTO(15L)).build();
+		if (pokemonTO == null){
+			mensagemRetorno = "Não foi localizado pokemon com este número.";
+			return Response.status(status).entity(mensagemRetorno).build();
+		}else{
+			return Response.status(status).entity(pokemonTO).build();
+		}
 	}
 	
 	/**
@@ -147,19 +150,25 @@ public class PokemonCtrl extends BaseCtrl<Pokemon> implements Serializable {
 	@Path("/pokemons")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response obterTodos() throws Exception {
+		List<PokemonTO> listPokemonTO = new ArrayList<PokemonTO>();
 		List<Pokemon> listPokemon = new ArrayList<Pokemon>();
+		String mensagemRetorno = "";
 		Integer status = Response.Status.OK.getStatusCode();
-		MsgRetorno retorno = new MsgRetorno();
 		try {
 			listPokemon = pokemonNeg.obterTodos();
 			if (listPokemon != null && !listPokemon.isEmpty()){
-				retorno.setListPokemon(listPokemon);
+				for (Pokemon pokemon2 : listPokemon) {
+					listPokemonTO.add(pokemon2.pokemonTO());
+				}
 			}
 		} catch (Exception e) {
-			retorno.setMensagem("Houve uma falha ao obtert todos Pokemon:" + e.getMessage());
-			retorno.setStatus(status);
+			mensagemRetorno = "Houve uma falha ao obter todos Pokemon:" + e.getMessage();
 			return Response.status(status).entity(e.getMessage()).build();
 		}
-		return Response.status(status).entity(retorno).build();
+		if (listPokemonTO.isEmpty()){
+			return Response.status(status).entity(mensagemRetorno).build();
+		}else{
+			return Response.status(status).entity(listPokemonTO).build();
+		}
 	}
 }
