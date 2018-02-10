@@ -1,7 +1,6 @@
 package com.novaxs.pokemon.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class PokemonTO implements Serializable {
@@ -10,9 +9,9 @@ public class PokemonTO implements Serializable {
 
 	private Long num;
 	private String name;
-	private List<String> type = new ArrayList<String>();
-	private List<NextEvolution> next_evolution = new ArrayList<NextEvolution>();
-	private List<PreEvolution> prev_evolution = new ArrayList<PreEvolution>();
+	private List<String> type;
+	private List<EvolutionTO> next_evolution;
+	private List<EvolutionTO> prev_evolution;
 
 	public PokemonTO() {
 	}
@@ -45,28 +44,28 @@ public class PokemonTO implements Serializable {
 		this.type = type;
 	}
 
-	public List<NextEvolution> getNext_evolution() {
-		return next_evolution;
-	}
-
-	public void setNext_evolution(List<NextEvolution> next_evolution) {
-		this.next_evolution = next_evolution;
-	}
-
-	public List<PreEvolution> getPrev_evolution() {
-		return prev_evolution;
-	}
-
-	public void setPrev_evolution(List<PreEvolution> prev_evolution) {
-		this.prev_evolution = prev_evolution;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((num == null) ? 0 : num.hashCode());
 		return result;
+	}
+
+	public List<EvolutionTO> getNext_evolution() {
+		return next_evolution;
+	}
+
+	public void setNext_evolution(List<EvolutionTO> next_evolution) {
+		this.next_evolution = next_evolution;
+	}
+
+	public List<EvolutionTO> getPrev_evolution() {
+		return prev_evolution;
+	}
+
+	public void setPrev_evolution(List<EvolutionTO> prev_evolution) {
+		this.prev_evolution = prev_evolution;
 	}
 
 	@Override

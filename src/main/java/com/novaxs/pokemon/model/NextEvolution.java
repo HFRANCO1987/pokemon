@@ -31,6 +31,9 @@ public class NextEvolution extends BaseEntity<Long> implements IListItemPokemon,
 	@ManyToOne
 	@JoinColumn(name = "id_pokemon")
 	private Pokemon pokemon;
+	
+	public NextEvolution() {
+	}
 
 	public Long getId() {
 		return id;

@@ -2,37 +2,30 @@ package com.novaxs.pokemon.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+public class EvolutionTO implements Serializable {
 
-@Entity
-@Table(name = "tab_preevolution")
-public class PreEvolution extends BaseEntity<Long> implements IListItemPokemon, Serializable {
+	private static final long serialVersionUID = 4083035318497907427L;
 
-	private static final long serialVersionUID = -5956889182011307054L;
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
 	private Long id;
-
-	@Column(name = "num")
 	private Long num;
-
-	@Column(name = "name")
 	private String name;
+	private PokemonTO pokemon;
 
-	@ManyToOne
-	@JoinColumn(name = "id_pokemon")
-	private Pokemon pokemon;
-	
-	public PreEvolution() {
+	public EvolutionTO() {
+	}
+
+	public EvolutionTO(NextEvolution nextEvolution) {
+		this.id = nextEvolution.getId();
+		this.num = nextEvolution.getNum();
+		this.name = nextEvolution.getName();
+		this.pokemon = new PokemonTO(nextEvolution.getPokemon().getNum());
+	}
+
+	public EvolutionTO(PreEvolution prevEvolution) {
+		this.id = prevEvolution.getId();
+		this.num = prevEvolution.getNum();
+		this.name = prevEvolution.getName();
+		this.pokemon = new PokemonTO(prevEvolution.getPokemon().getNum());
 	}
 
 	public Long getId() {
@@ -59,11 +52,11 @@ public class PreEvolution extends BaseEntity<Long> implements IListItemPokemon, 
 		this.name = name;
 	}
 
-	public Pokemon getPokemon() {
+	public PokemonTO getPokemon() {
 		return pokemon;
 	}
 
-	public void setPokemon(Pokemon pokemon) {
+	public void setPokemon(PokemonTO pokemon) {
 		this.pokemon = pokemon;
 	}
 
@@ -84,7 +77,7 @@ public class PreEvolution extends BaseEntity<Long> implements IListItemPokemon, 
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		PreEvolution other = (PreEvolution) obj;
+		EvolutionTO other = (EvolutionTO) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -97,6 +90,5 @@ public class PreEvolution extends BaseEntity<Long> implements IListItemPokemon, 
 			return false;
 		return true;
 	}
-	
-	
+
 }

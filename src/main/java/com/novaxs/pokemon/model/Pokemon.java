@@ -2,9 +2,11 @@ package com.novaxs.pokemon.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -12,17 +14,17 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-
 @Entity
 @Table(name = "tab_pokemon")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Pokemon extends BaseEntity<Long> implements Serializable {
-
 
 	private static final long serialVersionUID = -1068802210721270244L;
 
@@ -34,18 +36,19 @@ public class Pokemon extends BaseEntity<Long> implements Serializable {
 	@Column(name = "name")
 	private String name;
 
-	@ElementCollection
-	private List<String> type = new ArrayList<String>();
+	@ElementCollection(fetch=FetchType.EAGER)
+	@CollectionTable(name = "pokemon_type")
+	private Set<String> type = new HashSet<String>();
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "pokemon", cascade = CascadeType.ALL)
-	private List<NextEvolution> next_evolution = new ArrayList<NextEvolution>();
+	private Set<NextEvolution> next_evolution = new HashSet<NextEvolution>();
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "pokemon", cascade = CascadeType.ALL)
-	private List<PreEvolution> prev_evolution = new ArrayList<PreEvolution>();
+	private Set<PreEvolution> prev_evolution = new HashSet<PreEvolution>();
 
 	public Pokemon() {
 	}
-	
+
 	public Pokemon(Long numeroDoPokemon) {
 		this.num = numeroDoPokemon;
 	}
@@ -66,27 +69,27 @@ public class Pokemon extends BaseEntity<Long> implements Serializable {
 		this.name = name;
 	}
 
-	public List<String> getType() {
+	public Set<String> getType() {
 		return type;
 	}
 
-	public void setType(List<String> type) {
+	public void setType(Set<String> type) {
 		this.type = type;
 	}
 
-	public List<NextEvolution> getNext_evolution() {
+	public Set<NextEvolution> getNext_evolution() {
 		return next_evolution;
 	}
 
-	public void setNext_evolution(List<NextEvolution> next_evolution) {
+	public void setNext_evolution(Set<NextEvolution> next_evolution) {
 		this.next_evolution = next_evolution;
 	}
 
-	public List<PreEvolution> getPrev_evolution() {
+	public Set<PreEvolution> getPrev_evolution() {
 		return prev_evolution;
 	}
 
-	public void setPrev_evolution(List<PreEvolution> prev_evolution) {
+	public void setPrev_evolution(Set<PreEvolution> prev_evolution) {
 		this.prev_evolution = prev_evolution;
 	}
 
@@ -118,11 +121,26 @@ public class Pokemon extends BaseEntity<Long> implements Serializable {
 	public PokemonTO pokemonTO() {
 		PokemonTO pokemonTO = new PokemonTO();
 		pokemonTO.setName(this.name);
-		pokemonTO.setNext_evolution(this.next_evolution);
+		if (this.next_evolution != null && !this.next_evolution.isEmpty()) {
+			pokemonTO.setNext_evolution(new ArrayList<>());
+			for (NextEvolution nextEvolution : next_evolution) {
+				pokemonTO.getNext_evolution().add(new EvolutionTO(nextEvolution));
+			}
+		}
+		if (this.prev_evolution != null && !this.prev_evolution.isEmpty()) {
+			pokemonTO.setPrev_evolution(new ArrayList<>());
+			for (PreEvolution prevEvolution : prev_evolution) {
+				pokemonTO.getPrev_evolution().add(new EvolutionTO(prevEvolution));
+			}
+		}
+		if (this.type != null && !this.type.isEmpty()) {
+			pokemonTO.setType(new ArrayList<>());
+			for (String ty : type) {
+				pokemonTO.getType().add(ty);
+			}
+		}
 		pokemonTO.setNum(this.num);
-		pokemonTO.setPrev_evolution(this.prev_evolution);
-		pokemonTO.setType(this.type);
 		return pokemonTO;
 	}
-	
+
 }

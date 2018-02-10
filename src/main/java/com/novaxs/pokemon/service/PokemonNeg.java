@@ -2,6 +2,7 @@ package com.novaxs.pokemon.service;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -37,7 +38,7 @@ public class PokemonNeg extends GenericNegocio<Pokemon> implements Serializable 
 		preencheRelacionamentoBidirecional(pokemon, pokemon.getPrev_evolution());
 	}
 
-	private void preencheRelacionamentoBidirecional(Pokemon pokemon, List<? extends IListItemPokemon> lista) {
+	private void preencheRelacionamentoBidirecional(Pokemon pokemon, Set<? extends IListItemPokemon> lista) {
 		for (IListItemPokemon item : lista) {
 			item.setPokemon(pokemon);
 		}

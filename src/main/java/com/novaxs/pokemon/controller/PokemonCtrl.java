@@ -22,13 +22,13 @@ import com.novaxs.pokemon.model.PokemonTO;
 import com.novaxs.pokemon.service.PokemonNeg;
 
 @Path("/")
-public class PokemonCtrl extends BaseCtrl<Pokemon> implements Serializable {
+public class PokemonCtrl implements Serializable {
 
 	private static final long serialVersionUID = -8993719345888040984L;
 
 	@Inject
 	private PokemonNeg pokemonNeg;
-	
+
 	/**
 	 * Método GET "pokemon/NUMERO_DO_POKEMON/"
 	 * 
@@ -43,25 +43,26 @@ public class PokemonCtrl extends BaseCtrl<Pokemon> implements Serializable {
 			throws Exception {
 		PokemonTO pokemonTO = null;
 		Integer status = Response.Status.OK.getStatusCode();
-		String mensagemRetorno = "";
+		MsgRetorno retorno = new MsgRetorno();
 		try {
 			Pokemon pokemon = pokemonNeg.obterPokemonPorNumero(numeroDoPokemon);
-			if (pokemon != null && pokemon.getNum() !=null 
-					&& pokemon.getNum() > 0){
+			if (pokemon != null && pokemon.getNum() != null && pokemon.getNum() > 0) {
 				pokemonTO = pokemon.pokemonTO();
 			}
 		} catch (Exception e) {
-			mensagemRetorno = "Houve uma falha ao obtert Pokemon:" + e.getMessage();
-			return Response.status(status).entity(mensagemRetorno).build();
+			retorno.setMensagem("Houve uma falha ao obtert Pokemon:" + e.getMessage());
+			retorno.setStatus(status);
+			return Response.status(status).entity(retorno).build();
 		}
-		if (pokemonTO == null){
-			mensagemRetorno = "Não foi localizado pokemon com este número.";
-			return Response.status(status).entity(mensagemRetorno).build();
-		}else{
+		if (pokemonTO == null) {
+			retorno.setMensagem("Não foi localizado pokemon com este número.");
+			retorno.setStatus(status);
+			return Response.status(status).entity(retorno).build();
+		} else {
 			return Response.status(status).entity(pokemonTO).build();
 		}
 	}
-	
+
 	/**
 	 * Método PUT "pokemon/NUMERO_DO_POKEMON/"
 	 * 
@@ -74,7 +75,8 @@ public class PokemonCtrl extends BaseCtrl<Pokemon> implements Serializable {
 	@Path("/pokemon/{numero_do_pokemon}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response atualizarPokemon(@PathParam(value = "numero_do_pokemon") Long numeroPokemon, Pokemon pokemon) throws Exception {
+	public Response atualizarPokemon(@PathParam(value = "numero_do_pokemon") Long numeroPokemon, Pokemon pokemon)
+			throws Exception {
 		Integer status = Response.Status.OK.getStatusCode();
 		MsgRetorno retorno = new MsgRetorno();
 		try {
@@ -89,7 +91,7 @@ public class PokemonCtrl extends BaseCtrl<Pokemon> implements Serializable {
 		retorno.setStatus(status);
 		return Response.status(status).entity(retorno).build();
 	}
-	
+
 	/**
 	 * Método POST "pokemon"
 	 * 
@@ -116,7 +118,7 @@ public class PokemonCtrl extends BaseCtrl<Pokemon> implements Serializable {
 		retorno.setStatus(status);
 		return Response.status(status).entity(retorno).build();
 	}
-	
+
 	/**
 	 * "pokemon/NUMERO_DO_POKEMON/"
 	 * 
@@ -127,8 +129,7 @@ public class PokemonCtrl extends BaseCtrl<Pokemon> implements Serializable {
 	@DELETE
 	@Path("/pokemon/{numero_do_pokemon}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deletarPokemon(@PathParam(value = "numero_do_pokemon") Long numeroDoPokemon)
-			throws Exception {
+	public Response deletarPokemon(@PathParam(value = "numero_do_pokemon") Long numeroDoPokemon) throws Exception {
 		Integer status = Response.Status.OK.getStatusCode();
 		MsgRetorno retorno = new MsgRetorno();
 		try {
@@ -156,18 +157,18 @@ public class PokemonCtrl extends BaseCtrl<Pokemon> implements Serializable {
 		Integer status = Response.Status.OK.getStatusCode();
 		try {
 			listPokemon = pokemonNeg.obterTodos();
-			if (listPokemon != null && !listPokemon.isEmpty()){
+			if (listPokemon != null && !listPokemon.isEmpty()) {
 				for (Pokemon pokemon2 : listPokemon) {
 					listPokemonTO.add(pokemon2.pokemonTO());
 				}
 			}
 		} catch (Exception e) {
 			mensagemRetorno = "Houve uma falha ao obter todos Pokemon:" + e.getMessage();
-			return Response.status(status).entity(e.getMessage()).build();
-		}
-		if (listPokemonTO.isEmpty()){
 			return Response.status(status).entity(mensagemRetorno).build();
-		}else{
+		}
+		if (listPokemonTO.isEmpty()) {
+			return Response.status(status).entity(mensagemRetorno).build();
+		} else {
 			return Response.status(status).entity(listPokemonTO).build();
 		}
 	}
